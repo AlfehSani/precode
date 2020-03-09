@@ -3,6 +3,13 @@ using namespace std;
 typedef long long ll;
 ll a[1000005];
 map<ll,ll>phi;
+void modularInverse(ll n,ll prime)
+{
+    dp[0]=dp[1]=1;
+    for(ll i=2;i<=n;i++){
+        dp[i]=dp[prime%i]*((prime)-(prime/i))%prime;
+    }
+}
 ll MOD(ll x,ll p){
 	return x>p?x%p+p:x;
 }
