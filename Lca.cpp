@@ -42,7 +42,7 @@ void preprocess(int root) {
     lev[root]=0;
     timer = 0;
     l = ceil(log2(n));
-    up.assign(n, vector<int>(l + 1));
+    up.assign(n+10, vector<int>(l + 10));
     dfs(root, root);
 }
 int main()
