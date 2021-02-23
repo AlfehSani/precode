@@ -1,49 +1,48 @@
 #include<bits/stdc++.h>
+#define f first
+#define s second
+#define sz 200009
+#define l 25
 using namespace std;
-int n, l;
-vector<vector<int>> adj;
-int timer;
-vector<int> tin, tout,lev;
-vector<vector<int>> up;
+int n,lev[sz],up[sz+10][l+10]; 
+vector<int>adj[sz+10];
 void dfs(int v, int p)
 {
-    tin[v] = ++timer;
     up[v][0] = p;
     lev[v]=lev[p]+1;
     for (int i = 1; i <= l; ++i)
         up[v][i] = up[up[v][i-1]][i-1];
-
     for (int u : adj[v]) {
         if (u != p)
             dfs(u, v);
     }
-    tout[v] = ++timer;
-}
-bool is_ancestor(int u, int v)
-{
-    return tin[u] <= tin[v] && tout[u] >= tout[v];
+    return;
 }
 int lca(int u, int v)
 {
-    if (is_ancestor(u, v))
-        return u;
-    if (is_ancestor(v, u))
-        return v;
-    for (int i = l; i >= 0; --i) {
-        if (!is_ancestor(up[u][i], v))
-            u = up[u][i];
+     if(lev[u]<lev[v])
+    swap(u,v);//I supossed level of u is higher than v
+     for(int i=l;i>=0;i--)//Equalize both level
+   {
+    if(lev[up[u][i]]>=lev[v])
+    {
+        u=up[u][i];
     }
-    return up[u][0];
-}
-void preprocess(int root) {
-    tin.resize(n+10);
-    tout.resize(n+10);
-    lev.resize(n+10);
-    lev[root]=0;
-    timer = 0;
-    l = ceil(log2(n));
-    up.assign(n+10, vector<int>(l + 10));
-    dfs(root, root);
+   }
+    for(int i=l;i>=0;i--)
+   {
+    if(up[u][i]!=up[v][i])
+    {
+       u=up[u][i];
+       v=up[v][i];
+    }
+   }
+    if(u!=v)
+   {
+    u=up[u][0];
+    v=up[v][0];
+   }
+   return u;
 }
 int main()
 {
@@ -56,7 +55,7 @@ int main()
         adj[a].push_back(b);
         adj[b].push_back(a);
     }
-    preprocess(1);
+    dfs(1,0);
     for(int i=1;i<=q;i++)
     {
         int a,b;
