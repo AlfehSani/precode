@@ -1,0 +1,63 @@
+#include<bits/stdc++.h>
+typedef long long int ll;
+using namespace std;
+#define sz 300008
+#define mod 1000000007
+#define f first
+#define s second
+#define pa pair<ll,ll>
+ll arr[sz+10][10];
+string multiply( string a,long long b) {
+        int carry=0;
+         reverse(a.begin(),a.end());
+        for(int i = 0; i < a.size(); i++ ) {
+            carry += (a[i] - 48) * b;
+            a[i] = ( carry % 10 + 48 );
+            carry /= 10;
+        }
+        while( carry ) {
+            a += ( carry % 10 + 48 );
+            carry /= 10;
+        }
+         reverse(a.begin(),a.end());
+        return a;
+    }
+string subtraction(string a,string b){ //string a should be larger than b in numerical value
+    int car=0;
+    int sz=b.size();
+    string ans="";
+    int c1=a.size()-sz;
+    for(int i=sz-1;i>=0;i--)
+    {
+      int a1=a[i+c1]-b[i]-car;
+      car=0;
+      if(a1<0)
+        a1+=10,car++;
+      ans+=(a1+'0');
+    }
+    if(c1>0)
+    {
+      c1--;
+      for(int i=c1;i>=0;i--)
+        {
+          int a1=a[i]-'0'-car;
+          car=0;
+          if(a1<0)
+            car++,a1+=10;
+          ans+=(a1+'0');
+        }
+    }
+    reverse(ans.begin(),ans.end());
+    return ans;
+}
+int main()
+{
+ /// ios_base::sync_with_stdio(0);cin.tie(0);
+  int test_case=1;
+  //scanf("%d",&test_case);
+  while(test_case--)
+  {
+   
+  }
+  return 0;
+}
