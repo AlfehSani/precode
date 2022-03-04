@@ -1,8 +1,33 @@
+//  __builtin_popcount 
+#pragma GCC optimize("Ofast")
+#include<bits/stdc++.h>
+typedef long long int ll;
+using namespace std;
+#define sz 200002
+#define sz1 102
+#define mod 1000000007
+#define mod 998244353
+#define pr1 577
+#define pr2 593
+#define inf 1e18
+#define f first
+#define endl "\n"
+#define s second
+#define pa pair<ll,ll>
+#define eps 0.0000001
+#define eps1 1e-8
+#define pi acos(-1.0)
+#define vec array<ll,3>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
 using namespace __gnu_pbds;
-#define ordered_set tree<int, null_type,less<int>, rb_tree_tag,tree_order_statistics_node_update>
-#define ordered_multiset tree<pair<int, int>, null_type,less<pair<int, int> >, rb_tree_tag,tree_order_statistics_node_update>
+#define ordered_set tree<pair<int,int>, nuint_type,less<pair<int,int>>, rb_tree_tag,tree_order_statistics_node_update>
+mt19937 rnd(chrono::steady_clock::now().time_since_epoch().count());
+
+//ios_base::sync_with_stdio(0);cin.tie(0);
+  //freopen("handle_list.txt","r",stdin);
+  //freopen("updated_handle_list.txt","w",stdout);
+
 //check if 3 point are in a same line
 ll solve(ll x1,ll y1,ll x2,ll y2,ll x3,ll y3)
 {
@@ -39,6 +64,21 @@ long long binpow(long long a, long long b) {
     }
     return res;
 }
+
+void build_sieve() {
+    vector<int> pr;
+    mind[0] = mind[1] = 1;
+    for (int i = 2; i < N; ++i) {
+        if (mind[i] == 0) {
+            pr.push_back(i);
+            mind[i] = i;
+        }
+        for (int j = 0; j < int(pr.size()) && pr[j] <= mind[i] && i * pr[j] < N; ++j) {
+            mind[i * pr[j]] = pr[j];
+        }
+    }
+}
+
 //find number of co prime with i from 1 to mx
 void oiler(ll n)
 {
@@ -93,57 +133,15 @@ void print(__int128 x) {
     if (x > 9) print(x / 10);
     putchar(x % 10 + '0');
 }
-int arr[7][sz];
-char c[sz];
-void calculate_string_double_hash_front_back(int n)
-{
-   ll cur1=pr1,cur2=pr2;
-    ll sum1=0,sum2=0;
-    arr[5][0]=arr[6][0]=1;
-    for(int i=0;i<n;i++)
-    {
-     ll a1=c[i];
-     arr[5][i+1]=cur1;
-     arr[6][i+1]=cur2;
-     ll val1=(a1*cur1)%mod1;
-     ll val2=(a1*cur2)%mod2;
-     sum1=(sum1+val1)%mod1;
-     sum2=(sum2+val2)%mod2;
-     arr[0][i]=sum1;
-     arr[1][i]=sum2;
-     cur1=(cur1*pr1)%mod1;
-     cur2=(cur2*pr2)%mod2;
+//mobius function
+void mobius(int N) {
+  mob[1] = 1;
+  for (int i = 2; i < N; i++){
+    mob[i]--;
+    for (int j = i + i; j < N; j += i) {
+      mob[j] -= mob[i];
     }
-     cur1=pr1,cur2=pr2;
-     sum1=0,sum2=0;
-     arr[2][n]=arr[3][n]=0;
-    for(int i=n-1;i>=0;i--)
-    {
-     ll a1=c[i];
-     ll val1=(a1*cur1)%mod1;
-     ll val2=(a1*cur2)%mod2;
-     sum1=(sum1+val1)%mod1;
-     sum2=(sum2+val2)%mod2;
-     arr[2][i]=sum1;
-     arr[3][i]=sum2;
-     cur1=(cur1*pr1)%mod1;
-     cur2=(cur2*pr2)%mod2;
-    }
-
-}
-bool is_palindrome(int st,int lst,int n)
-{
- ll gap2=max(0ll,(st+1ll)-(n-lst));
- ll gap1=max(0ll,(n-lst)-(st+1ll));
- //if(lst==2)
-  //printf("%lld %lld\n",arr[0][lst],gap2);
- ll val0=(((arr[0][lst]-0ll-(st?arr[0][st-1]:0)+mod1)%mod1)*arr[5][gap1])%mod1;
- ll val1=(((arr[1][lst]-0ll-(st?arr[1][st-1]:0)+mod2)%mod2)*arr[6][gap1])%mod2;
- ll val2=(((arr[2][st]-0ll-arr[2][lst+1]+mod1)%mod1)*arr[5][gap2])%mod1;
- ll val3=(((arr[3][st]-0ll-arr[3][lst+1]+mod2)%mod2)*arr[6][gap2])%mod2;
- if(val0==val2 && val1==val3)
-  return 1;
-return 0;
+  }
 }
 #define pair<int,int> pii
  priority_queue<pii, vector<pii>, greater<pii> >pq;
@@ -178,3 +176,24 @@ vector<int>adj[sz],cost[sz],v[sz],v1[sz];
 priority_queue<pair< int, pair<int,int> >,
         vector< pair< int, pair<int,int> > >,
         greater< pair< int, pair<int,int> > > > pq;
+int readInt () {
+    bool minus = false;
+    int result = 0;
+    char ch;
+    ch = getchar();
+    while (true) {
+        if (ch == '-') break;
+        if (ch >= '0' && ch <= '9') break;
+        ch = getchar();
+    }
+    if (ch == '-') minus = true; else result = ch-'0';
+    while (true) {
+        ch = getchar();
+        if (ch < '0' || ch > '9') break;
+        result = result*10 + (ch - '0');
+    }
+    if (minus)
+        return -result;
+    else
+        return result;
+}
