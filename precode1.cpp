@@ -21,7 +21,7 @@ using namespace std;
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
 using namespace __gnu_pbds;
-#define ordered_set tree<pair<int,int>, nuint_type,less<pair<int,int>>, rb_tree_tag,tree_order_statistics_node_update>
+#define ordered_set tree<pair<int,int>, null_type,less<pair<int,int>>, rb_tree_tag,tree_order_statistics_node_update>
 mt19937 rnd(chrono::steady_clock::now().time_since_epoch().count());
 
 //ios_base::sync_with_stdio(0);cin.tie(0);
@@ -32,10 +32,10 @@ mt19937 rnd(chrono::steady_clock::now().time_since_epoch().count());
 ll solve(ll x1,ll y1,ll x2,ll y2,ll x3,ll y3)
 {
   ll a,b,c,d;
-  a=x1-x2;
-  b=y1-y2;
-  c=x1-x3;
-  d=y1-y3;
+  a=-x1+x2;
+  b=-y1+y2;
+  c=-x1+x3;
+  d=-y1+y3;
   if(b==0 && d==0)
     return 1;
   if(b==0 || d==0)
@@ -47,7 +47,7 @@ ll solve(ll x1,ll y1,ll x2,ll y2,ll x3,ll y3)
   if(a*d==b*c)
     return 1;
     return 0;
-}
+} 
 //find a^b%mod,mod not nesseceryliy prime
 //also find a^-1%mod,for which call binpow(a,mod-2) mod should be prime
 int mod=1000000007;
@@ -80,6 +80,7 @@ void build_sieve() {
 }
 
 //find number of co prime with i from 1 to mx
+int arr[sz];
 void oiler(ll n)
 {
     for(int i=2;i<=n;i++)
@@ -90,26 +91,6 @@ void oiler(ll n)
                 arr[j]-=arr[j]/i;
         }
     }
-}
-ll ncr(ll n,ll r)
-{
-  if(r>n)
-    return 0;
-  ll a=(factinv[r]*factinv[n-r])%mod;
-  return (a*fact[n])%mod;
-}
-//find inv and factinv,fact for 1 to n
-void calculatefact(int n)
-{
-  inv[0] = inv[1] = 1;
-  factinv[0]=factinv[1]=1;
-  fact[0]=fact[1]=1; 
-  for(int i = 2; i <= n; i++)
-  {  
-    inv[i] = inv[mod % i] * (mod - mod / i) %mod;
-    factinv[i]=(factinv[i-1]*inv[i])%mod;
-    fact[i]=(fact[i-1]*i)%mod;
-  }
 }
 //how to read and write __int128 number
 __int128 read() {
@@ -143,7 +124,7 @@ void mobius(int N) {
     }
   }
 }
-#define pair<int,int> pii
+#define pii pair<int,int>
  priority_queue<pii, vector<pii>, greater<pii> >pq;
 struct pl
 {
@@ -196,4 +177,28 @@ int readInt () {
         return -result;
     else
         return result;
+}
+
+
+void build(int n)
+{
+  for(int i=2;i<=n;i++)
+    lg[i]=lg[i/2]+1;
+  for(int i=1;i<=n;i++)
+    mn[0][i]=mx[0][i]=arr[0][i];
+  for(int i=1;i<20;i++)
+    for(int j=1;j<=n;j++)
+    {
+      int lst1=min(n,j+(1<<(i-1)));
+      mn[i][j]=min(mn[i-1][j],mn[i-1][lst1]);
+      mx[i][j]=max(mx[i-1][j],mx[i-1][lst1]);
+    }
+}
+pa query(int l,int r)
+{
+  int lg1=lg[r-l+1];
+  int rr=r-(1<<lg1)+1;
+  int a=min(mn[lg1][l],mn[lg1][rr]);
+  int b=max(mx[lg1][l],mx[lg1][rr]);
+  return {a,b};
 }
