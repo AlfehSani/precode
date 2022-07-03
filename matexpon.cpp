@@ -1,51 +1,59 @@
-#include <bits/stdc++.h>
+#include<bits/stdc++.h>
 typedef long long int ll;
 using namespace std;
-
-const ll mod = 1e9 + 7;
-
-inline int mul(int a, int b) {
-  return 1ll * a * b % mod;
-}
-
-inline int add(int a, int b) {
-  int c = a + b;
-  return c >= mod ? c - mod : c;
-}
-
-struct matrix{
-  int p, q, r, s;
-  matrix() {}
-  matrix(int p, int q, int r, int s): p(p), q(q), r(r), s(s) {
-  }
-  matrix operator * (matrix b) {
-    return matrix(add(mul(p, b.p), mul(q, b.r)), add(mul(p, b.q), mul(q, b.s)),
-        add(mul(r, b.p), mul(s, b.r)), add(mul(r, b.q), mul(s, b.s))
-      );
-  }
-  matrix operator + (matrix b) {
-    return matrix(add(p, b.p), add(q, b.q), add(r, b.r), add(s, b.s));
-  }
- 
-};
- matrix pow(matrix a, int b) {
-  matrix c(1, 0, 0, 1);
-  for(int i = b; i > 0; i >>= 1) {
-    if(i & 1) {
-      c = (c * a);
+#define sz 400009
+#define sz1 109
+#define mod 1000000007
+//#define mod 998244353
+#define pr1 577
+#define pr2 593
+#define inf 1e18 
+#define f first
+#define s second
+#define pa pair<ll,ll>
+#define eps 1e-6
+#define eps1 1e-8
+#define pi acos(-1.0)
+#define matrix vector<vector<ll> > 
+mt19937 rnd(chrono::steady_clock::now().time_since_epoch().count());
+ll m,n;
+matrix mul(matrix a,matrix b)
+{
+  matrix c(m,vector<ll>(m,0));
+  ll a1=0;
+  for(int i=0;i<m;i++)
+  {
+    for(int j=0;j<m;j++)
+    {
+     for(int k=0;k<m;k++)
+     {
+      c[i][j]=(c[i][j]+(a[i][k]*b[k][j])%mod)%mod;
+     }
     }
-    a = a * a;
   }
   return c;
 }
-int main() {
-matrix mtx(0,1,1,1);
-int t;
-scanf("%d",&t);
-while(t--)
+matrix pow(matrix v,ll val)
 {
-  int n;
-  scanf("%d",&n);
-  printf("%d\n",pow(mtx,n).q );
+  if(val==1)
+    return v;
+  if(val&1)
+    return mul(v,pow(v,val-1));
+  matrix a=pow(v,val/2);
+  return mul(a,a);
 }
+int main()
+{
+  //ios_base::sync_with_stdio(0);cin.tie(0);
+  //freopen("table.in","r",stdin);
+  // freopen("output.txt","w",stdout);
+  int test_case=1;
+ // scanf("%d",&test_case);
+  for(int cs=1;cs<=test_case;cs++)
+  {
+     m=3;
+   matrix v(m,vector<ll>(m,0));
+   matrix a=pow(v,0);
+  }
+  return 0;
 }
