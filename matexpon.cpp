@@ -16,23 +16,24 @@ using namespace std;
 #define pi acos(-1.0)
 #define matrix vector<vector<ll> > 
 mt19937 rnd(chrono::steady_clock::now().time_since_epoch().count());
-ll m,n;
-matrix mul(matrix a,matrix b)
+ll m;
+matrix mul(matrix mat1, matrix mat2)
 {
-  matrix c(m,vector<ll>(m,0));
-  ll a1=0;
-  for(int i=0;i<m;i++)
-  {
-    for(int j=0;j<m;j++)
-    {
-     for(int k=0;k<m;k++)
-     {
-      c[i][j]=(c[i][j]+(a[i][k]*b[k][j])%mod)%mod;
-     }
-    }
-  }
-  return c;
+  int a=mat1.size();
+  int b=mat1[0].size();
+  int c=mat2[0].size();
+  int d=mat2.size();
+  assert(b==d);
+  matrix ret(a,vector<ll>(c));
+  for(int i=0;i<a;i++)
+    for(int k=0;k<b;k++)
+      for(int j=0;j<c;j++){
+        ret[i][j]+=mat1[i][k]*mat2[k][j];
+        ret[i][j]%=mod;
+      }
+  return ret;
 }
+ 
 matrix pow(matrix v,ll val)
 {
   if(val==1)
