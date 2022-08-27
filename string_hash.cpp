@@ -20,58 +20,66 @@ using namespace std;
 using namespace __gnu_pbds;
 #define ordered_set tree<pair<int,int>, null_type,greater<pair<int,int>>, rb_tree_tag,tree_order_statistics_node_update>
 mt19937 rnd(chrono::steady_clock::now().time_since_epoch().count());
-int arr[7][sz];
-char c[sz];
-void calculate_string_double_hash_front_back(int n)
-{
-   ll cur1=pr1,cur2=pr2;
-    ll sum1=0,sum2=0;
-    arr[5][0]=arr[6][0]=1;
-    for(int i=0;i<n;i++)
-    {
-     ll a1=c[i];
-     arr[5][i+1]=cur1;
-     arr[6][i+1]=cur2;
-     ll val1=(a1*cur1)%mod1;
-     ll val2=(a1*cur2)%mod2;
-     sum1=(sum1+val1)%mod1;
-     sum2=(sum2+val2)%mod2;
-     arr[0][i]=sum1;
-     arr[1][i]=sum2;
-     cur1=(cur1*pr1)%mod1;
-     cur2=(cur2*pr2)%mod2;
-    }
-     cur1=pr1,cur2=pr2;
-     sum1=0,sum2=0;
-     arr[2][n]=arr[3][n]=0;
-    for(int i=n-1;i>=0;i--)
-    {
-     ll a1=c[i];
-     ll val1=(a1*cur1)%mod1;
-     ll val2=(a1*cur2)%mod2;
-     sum1=(sum1+val1)%mod1;
-     sum2=(sum2+val2)%mod2;
-     arr[2][i]=sum1;
-     arr[3][i]=sum2;
-     cur1=(cur1*pr1)%mod1;
-     cur2=(cur2*pr2)%mod2;
-    }
+const int N = 1e6 + 9;
+
+int power(long long n, long long k, const int mod) {
+  int ans = 1 % mod;
+  n %= mod;
+  if (n < 0) n += mod;
+  while (k) {
+    if (k & 1) ans = (long long) ans * n % mod;
+    n = (long long) n * n % mod;
+    k >>= 1;
+  }
+  return ans;
+}
+
+const int MOD1 = 127657753, MOD2 = 987654319;
+const int p1 = 137, p2 = 277;
+int ip1, ip2;
+pair<int, int> pw[N], ipw[N];
+void prec() {
+  pw[0] =  {1, 1};
+  for (int i = 1; i < N; i++) {
+    pw[i].first = 1LL * pw[i - 1].first * p1 % MOD1;
+    pw[i].second = 1LL * pw[i - 1].second * p2 % MOD2;
+  }
+  ip1 = power(p1, MOD1 - 2, MOD1);
+  ip2 = power(p2, MOD2 - 2, MOD2);
+  ipw[0] =  {1, 1};
+  for (int i = 1; i < N; i++) {
+    ipw[i].first = 1LL * ipw[i - 1].first * ip1 % MOD1;
+    ipw[i].second = 1LL * ipw[i - 1].second * ip2 % MOD2;
+  }
 
 }
-bool is_palindrome(int st,int lst,int n)
-{
- ll gap2=max(0ll,(st+1ll)-(n-lst));
- ll gap1=max(0ll,(n-lst)-(st+1ll));
- //if(lst==2)
-  //printf("%lld %lld\n",arr[0][lst],gap2);
- ll val0=(((arr[0][lst]-0ll-(st?arr[0][st-1]:0)+mod1)%mod1)*arr[5][gap1])%mod1;
- ll val1=(((arr[1][lst]-0ll-(st?arr[1][st-1]:0)+mod2)%mod2)*arr[6][gap1])%mod2;
- ll val2=(((arr[2][st]-0ll-arr[2][lst+1]+mod1)%mod1)*arr[5][gap2])%mod1;
- ll val3=(((arr[3][st]-0ll-arr[3][lst+1]+mod2)%mod2)*arr[6][gap2])%mod2;
- if(val0==val2 && val1==val3)
-  return 1;
-return 0;
-}
+struct Hashing {
+  int n;
+  string s; // 0 - indexed
+  vector<pair<int, int>> hs; // 1 - indexed
+  Hashing() {}
+  Hashing(string _s) {
+    n = _s.size();
+    s = _s;
+    hs.emplace_back(0, 0);
+    for (int i = 0; i < n; i++) {
+      pair<int, int> p;
+      p.first = (hs[i].first + 1LL * pw[i].first * s[i] % MOD1) % MOD1;
+      p.second = (hs[i].second + 1LL * pw[i].second * s[i] % MOD2) % MOD2;
+      hs.push_back(p);
+    }
+  }
+  pair<int, int> get_hash(int l, int r) { // 1 - indexed
+    assert(1 <= l && l <= r && r <= n);
+    pair<int, int> ans;
+    ans.first = (hs[r].first - hs[l - 1].first + MOD1) * 1LL * ipw[l - 1].first % MOD1;
+    ans.second = (hs[r].second - hs[l - 1].second + MOD2) * 1LL * ipw[l - 1].second % MOD2;
+    return ans;
+  }
+  pair<int, int> get_hash() {
+    return get_hash(1, n);
+  }
+};
 //max prefix match with suffix
 vector<int> prefix_function(string s) {
     int n = (int)s.length();
