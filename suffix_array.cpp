@@ -2,7 +2,7 @@
 using namespace std;
 //Be careful lcp[i] means lcp of sorted suffix i and i+1
 //chnage value of LG according to string length
-//for separator use "A" 
+//for separator use any character which is greater than '$',or can replace $ with '\0' 
 // 0 based indexing
 
 void induced_sort(const vector<int> &vec, int val_range, vector<int> &SA, const vector<bool> &sl, const vector<int> &lms_idx) {
