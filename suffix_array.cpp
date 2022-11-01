@@ -177,6 +177,43 @@ struct SuffixArray {
     int b1 = get_lcp2(i,ln);
     return {a1,b1};
   }
+    int lower_bound(string &t) {
+    int l = 0, r = n - 1, k = t.size(), ans = n;
+    while (l <= r) {
+      int mid = l + r >> 1;
+      if (s.substr(sa[mid], min(n - sa[mid], k)) >= t) ans = mid, r = mid - 1;
+      else l = mid + 1;
+    }
+    return ans;
+  }
+  int upper_bound(string &t) {
+    int l = 0, r = n - 1, k = t.size(), ans = n;
+    while (l <= r) {
+      int mid = l + r >> 1;
+      if (s.substr(sa[mid], min(n - sa[mid], k)) > t) ans = mid, r = mid - 1;
+      else l = mid + 1;
+    }
+    return ans;
+  }
+  // occurrences of s[p, ..., p + len - 1]
+  pair<int, int> find_occurrence(int p, int len) {
+    p = rank[p];
+    pair<int, int> ans = {p, p};
+    int l = 0, r = p - 1;
+    while (l <= r) {
+      int mid = l + r >> 1;
+      if (query(mid, p - 1) >= len) ans.first = mid, r = mid - 1;
+      else l = mid + 1;
+    }
+    l = p + 1, r = n - 1;
+    while (l <= r) {
+      int mid = l + r >> 1;
+      if (query(p, mid - 1) >= len) ans.second = mid, l = mid + 1;
+      else r = mid - 1;
+    }
+    return ans;
+  }
+
 }; 
 int32_t main() {
   ios_base::sync_with_stdio(0);
