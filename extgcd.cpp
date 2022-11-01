@@ -23,6 +23,7 @@ bool find_any_solution (lll a, lll b, lll c, lll & x0, lll & y0, lll & g) {
 	if (b < 0)   y0 *= -1;
 	return true;
 }
+// for one shift x += b/g,y-=a/g ,total change =a+b/g
 void shift_solution (lll & x, lll & y, lll a, lll b, lll cnt) {
 	x += cnt * b;
 	y -= cnt * a;
