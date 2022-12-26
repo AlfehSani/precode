@@ -20,33 +20,30 @@ std::vector<ll> v[sz];
 ll tim=0;
 ll dis[sz],low[sz];
 std::vector<pa>bridge;
-void find_articulation_bridge(ll node,ll par)
-{
-dis[node]=low[node]=++tim;
-int children=0;
-for(int u:v[node])
-{
-    if(u==par)
-        continue;
-    if(!dis[u])
-    {
-        find_articulation_bridge(u,node);
-        if(dis[node]<low[u]){
-         bridge.push_back({u,node});
+void find_articulation_bridge(ll node,ll par) {
+    dis[node]=low[node]=++tim;
+    int children=0;
+    for(int u:v[node]) {
+        if(u==par)
+            continue;
+        if(!dis[u]) {
+            find_articulation_bridge(u,node);
+            if(dis[node]<low[u]) {
+            bridge.push_back({u,node});
+            }
+            low[node]=min(low[u],low[node]);
+            /* articlation point
+            if(low[u]>=dis[node] && par!=-1)
+            point */
+            children++;
         }
-        low[node]=min(low[u],low[node]);
-        /* articlation point
-        if(low[u]>=dis[node] && par!=-1)
-        point */
-        children++;
+        else
+            low[node]=min(low[node],dis[u]);
     }
-    else
-        low[node]=min(low[node],dis[u]);
-}
- /* articlation point
-if(par==-1 && children>1)
-point */
-}
+    /* articlation point
+    if(par==-1 && children>1) 
+    point */
+    }
 int main()
 {
   //ios_base::sync_with_stdio(0);cin.tie(0);
