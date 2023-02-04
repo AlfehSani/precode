@@ -17,31 +17,43 @@ using namespace std;
 #define matrix vector<vector<ll> > 
 mt19937 rnd(chrono::steady_clock::now().time_since_epoch().count());
 ll m;
-matrix mul(matrix mat1, matrix mat2)
+void mul(matrix &mat1, matrix &mat2)
 {
   int a=mat1.size();
   int b=mat1[0].size();
   int c=mat2[0].size();
   int d=mat2.size();
-  assert(b==d);
-  matrix ret(a,vector<ll>(c));
+  //assert(b==d);
+  matrix ret(a,vector<int>(c));
   for(int i=0;i<a;i++)
     for(int k=0;k<b;k++)
       for(int j=0;j<c;j++){
-        ret[i][j]+=mat1[i][k]*mat2[k][j];
-        ret[i][j]%=mod;
+        ret[i][j]+=(1ll*mat1[i][k]*mat2[k][j])%mod;
+        if(ret[i][j] >= mod)
+        ret[i][j]-=mod;
       }
-  return ret;
+     mat1 = ret;
+  //return ret;
 }
  
 matrix pow(matrix v,ll val)
 {
   if(val==1)
     return v;
-  if(val&1)
-    return mul(v,pow(v,val-1));
-  matrix a=pow(v,val/2);
-  return mul(a,a);
+	matrix ans(2,vector<int>(2,1));
+	int ektao = 0;
+	while(val) {
+		if(val&1){
+			if(ektao)
+				mul(ans,v);
+			else
+				ans = v;
+			ektao++;
+		}
+		mul(v,v);
+		val /= 2;
+	}
+  return ans;
 }
 int main()
 {
