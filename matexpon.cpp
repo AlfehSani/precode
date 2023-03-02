@@ -1,72 +1,122 @@
-#include<bits/stdc++.h>
-typedef long long int ll;
+#include <bits/stdc++.h>
 using namespace std;
-#define sz 400009
-#define sz1 109
-#define mod 1000000007
-//#define mod 998244353
-#define pr1 577
-#define pr2 593
-#define inf 1e18 
-#define f first
-#define s second
-#define pa pair<ll,ll>
-#define eps 1e-6
-#define eps1 1e-8
-#define pi acos(-1.0)
-#define matrix vector<vector<ll> > 
-mt19937 rnd(chrono::steady_clock::now().time_since_epoch().count());
-ll m;
-void mul(matrix &mat1, matrix &mat2)
+const int mod = 10007;
+
+#define MODMATEXPO mod
+
+#define ll long long
+template<typename intex, int N>
+struct matrix {
+    intex x[N + 1][N + 1];
+    
+    matrix(intex v = 0) {
+        memset(x, 0, sizeof x);
+        for (int i = 1; i <= N; i++) {
+            x[i][i] = v;
+        }
+    }
+
+    intex * operator [] (int a) {return x[a];}
+
+    inline matrix operator*(const matrix &r) {
+        matrix<intex, N> p(0);
+        for (int k = 1; k <= N; ++k) {
+            for (int i = 1; i <= N; ++i) {
+                if (x[i][k] == 0) continue;
+                for (int j = 1; j <= N; ++j) {
+                    p.x[i][j] += x[i][k] * r.x[k][j];
+
+#ifdef MODMATEXPO
+                    p.x[i][j] %= MODMATEXPO;
+#endif
+                }
+            }
+        }
+        return p;
+    }
+    
+    inline matrix mul(const matrix &r, const int col) {
+        matrix<intex, N> p(0);
+        for (int k = 1; k <= N; ++k) {
+            for (int i = 1; i <= N; ++i) {
+                if (x[i][k] == 0) continue;
+                for (int j = 1; j <= col; ++j) {
+                    p.x[i][j] += x[i][k] * r.x[k][j];
+
+#ifdef MODMATEXPO
+                    p.x[i][j] %= MODMATEXPO;
+#endif
+                }
+            }
+        }
+        return p;
+    }
+    inline matrix pow(ll p) {
+        matrix r(1), a = *this;
+        for (; p > 0 ; p >>= 1) {
+            if (p & 1) r = r * a;
+            a = a * a;
+        }
+        return r;
+    }
+    intex determinant() const {
+        intex r = 1, det[N + 1][N + 1];
+        for (int i = 1; i <= N; ++i) memcpy(det[i], x[i], sizeof(x[i]));
+        for (int i = 1; i <= N; ++i) {
+            for (int j = i + 1; j <= N; ++j) {
+                while (det[j][i] != 0) {
+                    intex ratio = det[i][i] / det[j][i];
+                    for (int k = i; k <= N; ++k) {
+                        det[i][k] -= ratio * det[j][k];
+                        swap(det[i][k], det[j][k]);
+                    }
+                    r = -r;
+                }
+            }
+            r = r * det[i][i];
+        }
+        return r;
+    }
+    void print() {
+        cout << N << '\n';
+        for (int i = 1; i <= N; i++) {
+            for (int j = 1; j <= N; j++)
+                cout << x[i][j] << " \n"[j == N];
+        }
+    }
+};
+
+
+int main(int argc, char const *argv[])
 {
-  int a=mat1.size();
-  int b=mat1[0].size();
-  int c=mat2[0].size();
-  int d=mat2.size();
-  //assert(b==d);
-  matrix ret(a,vector<int>(c));
-  for(int i=0;i<a;i++)
-    for(int k=0;k<b;k++)
-      for(int j=0;j<c;j++){
-        ret[i][j]+=(1ll*mat1[i][k]*mat2[k][j])%mod;
-        if(ret[i][j] >= mod)
-        ret[i][j]-=mod;
-      }
-     mat1 = ret;
-  //return ret;
-}
- 
-matrix pow(matrix v,ll val)
-{
-  if(val==1)
-    return v;
-	matrix ans(2,vector<int>(2,1));
-	int ektao = 0;
-	while(val) {
-		if(val&1){
-			if(ektao)
-				mul(ans,v);
-			else
-				ans = v;
-			ektao++;
-		}
-		mul(v,v);
-		val /= 2;
-	}
-  return ans;
-}
-int main()
-{
-  //ios_base::sync_with_stdio(0);cin.tie(0);
-  //freopen("table.in","r",stdin);
-  // freopen("output.txt","w",stdout);
-  int test_case=1;
- // scanf("%d",&test_case);
-  for(int cs=1;cs<=test_case;cs++)
-  {
-     m=3;
-   matrix v(m,vector<ll>(m,0));
-   matrix a=pow(v,0);
-  }
-  return 0;
+
+    int n; cin >> n;
+    matrix<int, 3> mat;
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= n; j++) {
+             cin >> mat.x[i][j];
+            //cin >> mat[i][j];
+        }
+    }
+    mat.print();
+    // int t;
+    // scanf("%d",&t);
+    // for(int I=1;I<=t;I++)
+    // {
+
+    //  printf("Case %d: ",I);
+    //  int a,b,c,d,n;
+    //  scanf("%d %d %d %d",&n,&a,&b,&c);
+    //  matrix<int,4> arr;
+    //  matrix<int,4> brr;
+    //  int br[]={0,0,0,c};
+    //  brr.init(br,4,1);
+    //  int ar[]={a,0,b,1,1,0,0,0,0,1,0,0,0,0,0,1};
+    //  arr.init(ar,4,4);
+    //  arr=arr.pow(n);
+    //  arr=arr*brr;
+    //  // arr=arr.mul(brr,1);//matrix,col
+    //  printf("%d\n", arr.x[3][1]);
+    // }
+    return 0;
 }
