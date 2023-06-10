@@ -37,4 +37,5 @@ for i 0 to n
 sum of ncr(n,i)*ncr(m,i) = ncr(n+m,n);
 for i 0 to a
 sum of ncr(n+i,n) = ncr(n+a+1,n+1); 
+catalan triangle C(n, k) = (n - k + 1) / (n + 1) * ncr(n + k, k)
 */
