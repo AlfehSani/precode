@@ -1,34 +1,40 @@
 #include<bits/stdc++.h>
 using namespace std;
 #define sz 20009
-int bit[sz],n;
-//bit is 1 based indexing
-void update(int x, int delta)//at x index update delta
-{
-      for(; x <= n; x += x&-x)
-        bit[x] += delta;
-}
-int query(int x)//query sum from 1 to x index
-{
-     int sum = 0;
-     for(; x > 0; x -= x&-x)
-        sum += bit[x];
-     return sum;
-}h
-int main()
-{
-    int q;
-    scanf("%d %d",&n,&q);
-    for(int i=1;i<=n;i++)
-    {
-        int a;
-        scanf("%d",&a);
-        update(i,a);
+struct BIT{
+    int n;
+    std::vector<ll> bt;
+    BIT() {}
+    BIT(int _n) {
+        n = _n;
+        bt.resize(n + 1);
     }
-    while(q--)
-    {
-        int a,b;
-        scanf("%d %d",&a,&b);
-        printf("%d\n",query(b)-query(a-1));
+    void update(int i, ll val) {
+        if(i <= 0) return;
+        while(i <= n) {
+            bt[i] += val;
+            i += i&(-i);
+        }
     }
+    void update(int i, int j, ll val) {
+        if(i > j) return;
+        update(i, val);
+        update(j + 1, -val);
+    }
+    ll query(int l) {
+        ll ans = 0;
+        while(l > 0) {
+            ans += bt[l];
+            l -= l&-l;
+        }
+        return ans;
+    }
+    ll query(int l, int r) {
+        if(l > r || l == 0) return 0LL;
+        return query(r) - query(l - 1);
+    }
+};
+int main() {
+    int n; cin >> n;
+    BIT bit(n);
 }
