@@ -1,13 +1,6 @@
-#pragma GCC optimize("Ofast")
-#pragma GCC optimize("unroll-loops")
-#pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,tune=native")
 #include<bits/stdc++.h>
-#define ll long long
-#define sz 200005
-#define sz1 101
-#define vec array<int,3>
-#define pa pair<int,int> 
 using namespace std;
+const int sz = 1e5 + 5;
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
 using namespace __gnu_pbds;
@@ -15,104 +8,60 @@ using namespace __gnu_pbds;
 ordered_set t[4*sz];
 
 
-ll arr[sz];
-void build(ll node,ll l,ll r)
-{
-    if(l==r)
-    {
-        t[node].insert({arr[l],l});
-        return;
-    }
-    for(ll i=l;i<=r;i++)
-        t[node].insert({arr[i],i});
-    ll mid=(l+r)/2;
-    build(2*node,l,mid);
-    build(2*node+1,mid+1,r);
+int arr[sz];
+void buildd(int node,int l,int r) {
+	if(l == r) {
+		t[node].insert({arr[l], l});
+		return;
+	}
+	for(int i = l; i <= r; i++)
+		t[node].insert({arr[i],i});
+	int mid = (l + r) / 2;
+	buildd(2 * node, l, mid);
+	buildd(2 * node + 1, mid + 1, r);
 }
 
-ll query(ll node,ll l,ll r,ll le,ll ri,ll v,ll idx)
-{
-     if(l>r || l>ri || le>r || le>ri)
-      return 0;
-    if(l>=le && r<=ri)
-    {
-        ll k=t[node].order_of_key({v,idx});
-        return k;
-    }
-    ll mid=(l+r)/2;
-    return query(2*node,l,mid,le,ri,v,idx) + query(2*node+1,mid+1,r,le,ri,v,idx);
+int query(int node,int l,int r,int le,int ri,int v) {
+	 if(l > r || l > ri || le > r || le > ri)
+	  return 0;
+	if(l >= le && r <= ri)
+	{
+		int k = t[node].order_of_key({v + 1, - 1});
+		return k;
+	}
+	int mid = (l + r) / 2;
+	return query(2 * node, l, mid, le, ri, v) + 
+	query(2 * node + 1, mid + 1, r, le, ri, v);
 }
 
-void update(ll node,ll l,ll r,ll i,ll v,ll nw)
-{
-    if(i<l or r<i)  return;
-    if(l==i and r==i)
-    {
-        t[node].erase(t[node].find({v,i}));
-        t[node].insert({nw,i});
-        return;
-    }
-    ll mid=(l+r)/2;
-    update(2*node,l,mid,i,v,nw);
-    update(2*node+1,mid+1,r,i,v,nw);
-    t[node].erase(t[node].find({v,i}));
-    t[node].insert({nw,i});
+void update(int node,int l,int r,int i,int v,int nw) {
+	if(i < l or r < i)  return;
+	t[node].erase(t[node].find({v, i}));
+    t[node].insert({nw, i});
+	if(l == i and r == i) return; 
+	int mid=(l+r)/2;
+	update(2 * node, l, mid, i, v, nw);
+	update(2 * node + 1,mid + 1, r, i, v, nw);
+   	return;
 }
-int main()
-{
-    ios_base::sync_with_stdio(0);
-    cin.tie(0);
-    int t=1;
-   // cin>>t;
-   // prec();
-    for(int cs=1;cs<=t;cs++){
-     int n;
-     cin>>n;
-     int nn=200000;
-     for(int i=1;i<=n;i++)
-      cin>>arr[i];
-     build(1,1,nn);
-     int q;
-     cin>>q;
-     while(q--)
-     {
-      int id;
-      cin>>id;
-      if(id==1)
-      {
-        n++;
-        int vl;
-        cin>>vl;
-        update(1,1,nn,n,arr[n],vl);
-        arr[n]=vl;
-      }
-      else if(id==2)
-      {
-        int vl;
-        //cin>>vl;
-        update(1,1,nn,n,arr[n],0);
-        arr[n]=0;
-        n--;
-      }
-      else
-      {
-        ll l,r,k;
-        cin>>l>>r>>k;
-        k=(r-l+1)-k+1;
-       // cout<<k<<"\n";
-        ll lo=0,hi=1000000001,ans=0;
-        while(lo<=hi)
-        {
-          ll mi=(lo+hi)/2;
-          ll a1=query(1,1,nn,l,r,mi,0);
-          //cout<<mi<<" "<<a1<<"\n";
-          if(a1>=k)
-            ans=mi,hi=mi-1;
-          else
-            lo=mi+1;
-        }
-        cout<<ans-1<<"\n";
-      }
-     }
-   }
+
+int32_t main() {
+	ios_base::sync_with_stdio(false);
+	cin.tie(0);
+	int n, q; cin >> n >> q;
+	for(int i = 1; i <= n; i++) cin >> arr[i];
+	buildd(1, 1, n);
+	while(q--) {
+		char c; cin >> c;
+		if(c == 'M') {
+			int i, X; cin >> i >> X;
+			int v = arr[i];
+			update(1, 1, n, i, v, X);
+			arr[i] = X;
+		} else {
+			int P, Q, X; cin >> P >> Q >> X;
+			cout << query(1, 1, n, P, Q, X) << "\n";
+		}
+	}
+	return 0; 
 }
